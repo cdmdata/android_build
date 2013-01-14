@@ -695,6 +695,7 @@ kernelimage: $(ACP)
 	echo $(HOST_PROCESSOR)
 	$(MAKE) -C kernel_imx $(TARGET_KERNEL_DEFCONF) $(KERNEL_ENV)
 	$(MAKE) -C kernel_imx -j$(HOST_PROCESSOR) uImage $(KERNEL_ENV)
+	$(MAKE) -C kernel_imx -j$(HOST_PROCESSOR) modules $(KERNEL_ENV)
 	$(ACP) kernel_imx/arch/arm/boot/uImage $(PRODUCT_OUT)/uImage
 else
 kernelimage:
