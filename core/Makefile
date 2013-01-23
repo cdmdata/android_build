@@ -727,6 +727,8 @@ recoveryimage: $(INSTALLED_RECOVERYIMAGE_TARGET) $(BIN_HELPER) $(LIB_HELPER)
 	mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/system/lib/
 	cp -f $(BIN_HELPER) $(TARGET_RECOVERY_ROOT_OUT)/system/bin/
 	cp -f $(TARGET_ROOT_OUT)/init $(TARGET_RECOVERY_ROOT_OUT)/
+	cp -f $(TARGET_ROOT_OUT)/sbin/adbd $(TARGET_RECOVERY_ROOT_OUT)/sbin/
+	cp -f $(TARGET_ROOT_OUT)/sbin/ueventd $(TARGET_RECOVERY_ROOT_OUT)/sbin/
 	cp -f $(LIB_HELPER) $(TARGET_RECOVERY_ROOT_OUT)/system/lib/
 	$(call build-recoveryimage-target,$(INSTALLED_RECOVERYIMAGE_TARGET))
 else
