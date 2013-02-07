@@ -315,14 +315,14 @@ INTERNAL_RAMDISK_FILES := $(filter $(TARGET_ROOT_OUT)/%, \
 	$(ALL_GENERATED_SOURCES) \
 	$(ALL_DEFAULT_INSTALLED_MODULES))
 
-BUILT_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
+BUILT_RAMDISK_TARGET := $(PRODUCT_OUT)/initrd.u-boot
 
 # We just build this directly to the install location.
 INSTALLED_RAMDISK_TARGET := $(BUILT_RAMDISK_TARGET)
 $(INSTALLED_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_RAMDISK_FILES) | $(MINIGZIP)
 	$(call pretty,"Target ram disk: $@")
-	$(hide) $(MKBOOTFS) $(TARGET_ROOT_OUT) | $(MINIGZIP) > $@
-
+	$(hide) $(MKBOOTFS) $(TARGET_ROOT_OUT) | $(MINIGZIP) > $(PRODUCT_OUT)/obj/temp_ramdisk.img
+	mkimage -A arm -O linux -T ramdisk -n "Android Ramdisk Image" -d $(PRODUCT_OUT)/obj/temp_ramdisk.img $@
 
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 
@@ -602,7 +602,8 @@ ifeq (,$(filter true, $(TARGET_NO_RECOVERY) $(BUILD_TINY_ANDROID)))
 
 INSTALLED_RECOVERYIMAGE_TARGET := $(PRODUCT_OUT)/recovery.img
 
-recovery_initrc := $(call include-path-for, recovery)/etc/init.rc
+#recovery_initrc := $(call include-path-for, recovery)/etc/init.rc
+recovery_initrc := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery.init.rc))
 #recovery_kernel := $(INSTALLED_KERNEL_TARGET) # same as a non-recovery system
 #recovery_ramdisk := $(PRODUCT_OUT)/ramdisk-recovery.img
 #recovery_build_prop := $(INSTALLED_BUILD_PROP_TARGET)
@@ -671,7 +672,7 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 	cp -R $(TARGET_ROOT_OUT) $(TARGET_RECOVERY_OUT)
 	rm $(TARGET_RECOVERY_ROOT_OUT)/init*.rc
 	echo Modifying ramdisk contents...
-	cp -f $(recovery_initrc) $(TARGET_RECOVERY_ROOT_OUT)/
+	cp -f $(recovery_initrc) $(TARGET_RECOVERY_ROOT_OUT)/init.rc
 	cp -f $(recovery_binary) $(TARGET_RECOVERY_ROOT_OUT)/sbin/
 	cp -rf $(recovery_resources_common) $(TARGET_RECOVERY_ROOT_OUT)/
 	$(foreach item,$(recovery_resources_private), \
@@ -681,6 +682,7 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 	cp $(RECOVERY_INSTALL_OTA_KEYS) $(TARGET_RECOVERY_ROOT_OUT)/res/keys
 	cat $(INSTALLED_DEFAULT_PROP_TARGET) $(recovery_build_prop) \
 	        > $(TARGET_RECOVERY_ROOT_OUT)/default.prop
+	
 
 else
 INSTALLED_RECOVERYIMAGE_TARGET :=
@@ -697,6 +699,8 @@ kernelimage: $(ACP)
 	$(MAKE) -C kernel_imx -j$(HOST_PROCESSOR) uImage $(KERNEL_ENV)
 	$(MAKE) -C kernel_imx -j$(HOST_PROCESSOR) modules $(KERNEL_ENV)
 	$(ACP) kernel_imx/arch/arm/boot/uImage $(PRODUCT_OUT)/uImage
+
+
 else
 kernelimage:
 endif
@@ -730,7 +734,14 @@ recoveryimage: $(INSTALLED_RECOVERYIMAGE_TARGET) $(BIN_HELPER) $(LIB_HELPER)
 	cp -f $(TARGET_ROOT_OUT)/sbin/adbd $(TARGET_RECOVERY_ROOT_OUT)/sbin/
 	cp -f $(TARGET_ROOT_OUT)/sbin/ueventd $(TARGET_RECOVERY_ROOT_OUT)/sbin/
 	cp -f $(LIB_HELPER) $(TARGET_RECOVERY_ROOT_OUT)/system/lib/
+	cp $(SYSTEMIMAGE_SOURCE_DIR)/bin/busybox $(TARGET_RECOVERY_ROOT_OUT)/system/bin/
 	$(call build-recoveryimage-target,$(INSTALLED_RECOVERYIMAGE_TARGET))
+	@echo ----- Making recovery ramdisk ------
+	$(MKRECOVERYRAMDISK) $(TARGET_RECOVERY_ROOT_OUT)
+	echo ------- Building fatboot.img ----------
+	$(MKFATBOOT) fatboot.img $(PRODUCT_OUT) . $(TARGET_BOOTSCRIPT)
+	cp $(PRODUCT_OUT)/obj/fatboot.img $(PRODUCT_OUT)/fatboot.img
+
 else
 recoveryimage:
 endif

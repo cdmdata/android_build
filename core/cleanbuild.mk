@@ -186,7 +186,14 @@ installclean_files := \
 	$(PRODUCT_OUT)/root \
 	$(PRODUCT_OUT)/system \
 	$(PRODUCT_OUT)/dex_bootjars \
-	$(PRODUCT_OUT)/obj/JAVA_LIBRARIES
+	$(PRODUCT_OUT)/obj/JAVA_LIBRARIES \
+	$(PRODUCT_OUT)/obj/fatboot.img \
+	$(PRODUCT_OUT)/obj/temp_ramdisk.img \
+	$(PRODUCT_OUT)/obj/tmpboot  \
+	$(PRODUCT_OUT)/*.u-boot \
+	$(PRODUCT_OUT)/recovery.ramdisk.cpio.gz \
+	$(PRODUCT_OUT)/fatboot.img \
+	$(PRODUCT_OUT)/uImage 
 
 # The files/dirs to delete during a dataclean, which removes any files
 # in the staging and emulator data partitions.
