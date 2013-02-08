@@ -25,7 +25,7 @@ mkfs.vfat -C $IMAGEFILE 20480
 #copy files to image
 mcopy -i $IMAGEFILE $OUTDIR/initrd_recovery.u-boot ::/
 mcopy -i $IMAGEFILE $OUTDIR/initrd.u-boot ::/
-mcopy -i $IMAGEFILE $OUTDIR/uImage ::/uImage53
+mcopy -i $IMAGEFILE $ROOTDIR/kernel_imx/arch/arm/boot/uImage ::/uImage53
 mcopy -i $IMAGEFILE $ROOTDIR/bootable/bootloader/uboot-imx/board/boundary/nitrogen53/$BOOTSCRIPT ::/
 
 #lib and modules, create temp dir structure
@@ -36,11 +36,19 @@ mkdir $OUTDIR/obj/tmpboot/lib/modules > /dev/null 2>&1
 
 #copy files to temp
 cp -ravf $ROOTDIR/kernel_imx/drivers/media/video/mxc/capture/*.ko $OUTDIR/obj/tmpboot/lib/modules/
+cp -rvf $ROOTDIR/kernel_imx/drivers/i2c/xrp6840.ko $OUTDIR/obj/tmpboot/lib/modules/
+
 cp $ROOTDIR/compat-wireless/drivers/net/wireless/wl12xx/wl12xx.ko $OUTDIR/obj/tmpboot/lib/modules/
 cp $ROOTDIR/compat-wireless/drivers/net/wireless/wl12xx/wl12xx_sdio.ko $OUTDIR/obj/tmpboot/lib/modules/
 cp $ROOTDIR/compat-wireless/net/mac80211/mac80211.ko $OUTDIR/obj/tmpboot/lib/modules/
 cp $ROOTDIR/compat-wireless/net/wireless/cfg80211.ko $OUTDIR/obj/tmpboot/lib/modules/
 cp $ROOTDIR/compat-wireless/compat/compat.ko $OUTDIR/obj/tmpboot/lib/modules/
+
+cp $ROOTDIR/compat-wireless/net/bluetooth/hidp/hidp.ko $OUTDIR/obj/tmpboot/lib/modules/
+cp $ROOTDIR/compat-wireless/net/bluetooth/rfcomm/rfcomm.ko $OUTDIR/obj/tmpboot/lib/modules/
+cp $ROOTDIR/compat-wireless/net/bluetooth/bnep/bnep.ko $OUTDIR/obj/tmpboot/lib/modules/
+cp $ROOTDIR/compat-wireless/net/bluetooth/bluetooth.ko $OUTDIR/obj/tmpboot/lib/modules/
+cp $ROOTDIR/compat-wireless/drivers/bluetooth/hci_uart.ko $OUTDIR/obj/tmpboot/lib/modules/
 
 #copy .bcb file
 mcopy -s -i $IMAGEFILE $OUTDIR/obj/.bcb ::/
