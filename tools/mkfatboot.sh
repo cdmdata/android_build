@@ -44,11 +44,11 @@ cp $ROOTDIR/compat-wireless/net/mac80211/mac80211.ko $OUTDIR/obj/tmpboot/lib/mod
 cp $ROOTDIR/compat-wireless/net/wireless/cfg80211.ko $OUTDIR/obj/tmpboot/lib/modules/
 cp $ROOTDIR/compat-wireless/compat/compat.ko $OUTDIR/obj/tmpboot/lib/modules/
 
-cp $ROOTDIR/compat-wireless/net/bluetooth/hidp/hidp.ko $OUTDIR/obj/tmpboot/lib/modules/
-cp $ROOTDIR/compat-wireless/net/bluetooth/rfcomm/rfcomm.ko $OUTDIR/obj/tmpboot/lib/modules/
-cp $ROOTDIR/compat-wireless/net/bluetooth/bnep/bnep.ko $OUTDIR/obj/tmpboot/lib/modules/
-cp $ROOTDIR/compat-wireless/net/bluetooth/bluetooth.ko $OUTDIR/obj/tmpboot/lib/modules/
-cp $ROOTDIR/compat-wireless/drivers/bluetooth/hci_uart.ko $OUTDIR/obj/tmpboot/lib/modules/
+cp $ROOTDIR/compat-bluetooth/net/bluetooth/hidp/hidp.ko $OUTDIR/obj/tmpboot/lib/modules/
+cp $ROOTDIR/compat-bluetooth/net/bluetooth/rfcomm/rfcomm.ko $OUTDIR/obj/tmpboot/lib/modules/
+cp $ROOTDIR/compat-bluetooth/net/bluetooth/bnep/bnep.ko $OUTDIR/obj/tmpboot/lib/modules/
+cp $ROOTDIR/compat-bluetooth/net/bluetooth/bluetooth.ko $OUTDIR/obj/tmpboot/lib/modules/
+cp $ROOTDIR/compat-bluetooth/drivers/bluetooth/hci_uart.ko $OUTDIR/obj/tmpboot/lib/modules/
 
 #copy .bcb file
 mcopy -s -i $IMAGEFILE $OUTDIR/obj/.bcb ::/
